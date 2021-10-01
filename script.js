@@ -130,13 +130,19 @@ document.addEventListener('keydown', (e) => {
       if(e.key == 'ArrowUp'){
          game.player.directionY = -pixelSize;
       }
-      else if(e.key == 'ArrowDown'){
+      else if(e.key == 'ArrowDown' && 
+               game.player.positionY < canvas.height - pixelSize
+            ){
          game.player.directionY = pixelSize;
       }
-      else if(e.key == 'ArrowLeft'){
+      else if(e.key == 'ArrowLeft' &&
+               game.player.positionX > pixelSize
+      ){
          game.player.directionX = -pixelSize;
       }
-      else if(e.key == 'ArrowRight'){
+      else if(e.key == 'ArrowRight' &&
+               game.player.positionX < canvas.width - pixelSize
+      ){
          game.player.directionX = pixelSize;;
       }
 
