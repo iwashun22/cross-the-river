@@ -35,6 +35,7 @@ class river{
       this.log = [];
       this.positionY = y;
       this.length = pixelSize;
+      this.direction = (Math.floor(Math.random() * 6) + 1) * 3;
    }
 }
 
@@ -64,9 +65,10 @@ function startGame(){
 }
 
 function ticker(){
-   //createRandomLog();
+   scrollScreen();
+   //createRiver();
 
-   //moveLog();
+   //moveRiver();
    movePlayer();
 
    // @ts-ignore
@@ -74,6 +76,18 @@ function ticker(){
    drawBackground();
    //drawLog();
    drawPlayer();
+}
+
+function scrollScreen(){
+   if(
+      game.player.positionY <= canvas.height * 3 / 4
+   ){
+      game.player.positionY += pixelSize;
+
+      game.rivers = game.rivers.map(r => 
+         r.positionY + pixelSize
+      )
+   }
 }
 
 function movePlayer(){
