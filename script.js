@@ -95,7 +95,6 @@ function createDefaultRivers(){
 
 function ticker(){
    scrollScreen();
-   //createRiver();
 
    //moveRiver();
    movePlayer();
