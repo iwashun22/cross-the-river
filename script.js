@@ -29,6 +29,7 @@ const game = {
 
    isOver: true,
    moving: null,
+   score: 0,
 
    rivers: [],
    maxRiversRows: 5,
@@ -37,7 +38,7 @@ const game = {
 
    maxLogWidth: 6,
    minLogWidth: 3,
-   logSize: 14
+   logSize: 14,
 };
 
 class river{
@@ -70,6 +71,7 @@ function init(){
    game.isOver = true;
    game.moving = null;
    game.rivers = [];
+   game.score = 0;
 }
 init();
 
@@ -110,6 +112,7 @@ function ticker(){
    drawBackground();
    drawLogs();
    drawPlayer();
+   //displayScore();
 }
 
 function scrollScreen(){
@@ -131,6 +134,7 @@ function scrollScreen(){
    }
    else game.spaceBetweenRivers--;
 
+   game.score++;
 }
 
 function createLogs(){
