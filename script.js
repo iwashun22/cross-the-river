@@ -4,9 +4,9 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 // set game board
-const pixelSize = 20;
+const pixelSize = 22;
 const boardLength = 21;
-const boardHeight = 25;
+const boardHeight = 21;
 
 canvas.setAttribute('width', `${pixelSize * boardLength}px`);
 canvas.setAttribute('height', `${pixelSize * boardHeight}px`);
@@ -24,14 +24,20 @@ const game = {
       directionX: 0,
       directionY: 0,
       countCooldown: 0,
-      cooldown: 20
+      cooldown: 15
    },
+
    isOver: true,
    moving: null,
+
    rivers: [],
    maxRiversRows: 5,
    countRivers: 0,
-   spaceBetweenRivers: 0
+   spaceBetweenRivers: 0,
+
+   maxLogWidth: 5,
+   minLogWidth: 2,
+   logSize: 14
 };
 
 class river{
@@ -40,7 +46,8 @@ class river{
       this.positionY = y;
       this.length = pixelSize;
       this.countCooldown = 0;
-      this.cooldown = (Math.floor(Math.random() * 6) + 1) * 3;
+      this.cooldown = 200;
+      this.logSpeed = (Math.floor(Math.random() * 3) + 1);
 
       const randomDirection = Math.floor(Math.random() * 2);
       if(randomDirection == 0)
@@ -53,10 +60,10 @@ class river{
 function init(){
    drawBackground();
    ctx.fillStyle = 'black';
-   ctx.font = "30px Arial";
+   ctx.font = "35px Arial";
    ctx.fillText(
       'Press enter to start...',
-      70, 
+      75, 
       // @ts-ignore
       canvas.height / 2
    )
@@ -95,13 +102,13 @@ function createDefaultRivers(){
 
 function ticker(){
    scrollScreen();
-   //createLogs
+   createLogs();
 
-   //moveRiver();
+   moveLogs();
    movePlayer();
 
    drawBackground();
-   //drawLog();
+   drawLogs();
    drawPlayer();
 }
 
@@ -131,6 +138,47 @@ function scrollScreen(){
       }
       else game.spaceBetweenRivers--;
    }
+}
+
+function createLogs(){
+   game.rivers.forEach(r => {
+      if(Math.random() * 10 < 1
+      
+      && r.countCooldown <= 0){
+         let log = {
+            width: Math.floor(Math.random() * (game.maxLogWidth - game.minLogWidth + 1)) + game.minLogWidth
+         }
+
+         if(r.direction == 'right'){
+            log.positionX = 0 - (log.width * pixelSize / 2);
+         }
+         else {
+            log.positionX = canvas.width + (log.width * pixelSize / 2);
+         }
+         
+         r.logs.push(log);
+         r.countCooldown = r.cooldown;
+      }
+      else r.countCooldown--;
+   })
+}
+
+function moveLogs(){
+   game.rivers.forEach(r => {
+      r.logs.forEach(log => {
+         if(r.direction == 'right'){
+            log.positionX += r.logSpeed;
+         }
+         else if(r.direction == 'left'){
+            log.positionX -= r.logSpeed;
+         }
+      })
+
+      r.logs = r.logs.filter(log => 
+         log.positionX + (log.width * pixelSize / 2) >= 0 &&
+         log.positionX - (log.width * pixelSize / 2) <= canvas.width
+      );
+   })
 }
 
 function movePlayer(){
@@ -163,6 +211,20 @@ function drawBackground(){
          canvas.width,
          pixelSize
       )
+   })
+}
+
+function drawLogs(){
+   game.rivers.forEach(r => {
+      r.logs.forEach(log => {
+         ctx.fillStyle = '#572D00';
+         ctx.fillRect(
+            log.positionX - (log.width / 2),
+            r.positionY - (game.logSize / 2),
+            log.width * pixelSize,
+            game.logSize
+         );
+      })
    })
 }
 
