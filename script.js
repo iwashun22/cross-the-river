@@ -158,6 +158,7 @@ function createLogs(){
 function moveLogs(){
    game.rivers.forEach(r => {
       r.logs.forEach(log => {
+         ///// need to change here ? /////
          const left = log.positionX - ((log.width / 2) * pixelSize);
          const right = log.positionX + ((log.width / 2) * pixelSize);
          if(r.direction == 'right'){
