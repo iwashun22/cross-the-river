@@ -159,8 +159,8 @@ function moveLogs(){
    game.rivers.forEach(r => {
       r.logs.forEach(log => {
          ///// need to change here ? /////
-         const left = log.positionX - ((log.width / 2) * pixelSize);
-         const right = log.positionX + ((log.width / 2) * pixelSize);
+         const left = log.positionX - (log.width * pixelSize / 2);
+         const right = log.positionX + (log.width * pixelSize / 2);
          if(r.direction == 'right'){
 
             if(
@@ -232,7 +232,7 @@ function drawLogs(){
       r.logs.forEach(log => {
          ctx.fillStyle = '#572D00';
          ctx.fillRect(
-            log.positionX - (log.width / 2),
+            log.positionX - (log.width * pixelSize / 2),
             r.positionY - (game.logSize / 2),
             log.width * pixelSize,
             game.logSize
