@@ -46,10 +46,10 @@ class river{
       this.positionY = y;
       this.length = pixelSize;
       this.countCooldown = 0;
-      this.logSpeed = (Math.random() * 2) + 1;
+      this.logSpeed = (Math.random() * 1.5) + 1;
       this.cooldown = 200 / this.logSpeed
 
-      const randomDirection = Math.floor(Math.random() * 2);
+      const randomDirection = Math.floor(Math.random() * 1.5);
       if(randomDirection == 0)
          this.direction = 'left';
       else 
@@ -101,7 +101,7 @@ function createDefaultRivers(){
 
 
 function ticker(){
-   scrollScreen();
+   //scrollScreen();
    createLogs();
 
    moveLogs();
@@ -113,31 +113,24 @@ function ticker(){
 }
 
 function scrollScreen(){
-   if(
-      game.player.positionY <= canvas.height * 3 / 4
-   ){
-      game.player.positionY += pixelSize;
 
-      game.rivers.forEach(r => {
-         r.positionY += pixelSize;
-      })
-
-      game.rivers = game.rivers.filter(r => r.positionY < canvas.height);
-
-      if(game.countRivers <= 0 && game.spaceBetweenRivers <= 0){
-         game.countRivers = Math.floor(Math.random() * game.maxRiversRows) + 1;
-         game.spaceBetweenRivers = Math.floor(Math.random() * 4) + 1;
-      }
-      
-      
-      if(game.countRivers > 0 && game.spaceBetweenRivers > 0){
-         let r = new river(pixelSize / 2);
-         game.rivers.push(r);
-
-         game.countRivers--;
-      }
-      else game.spaceBetweenRivers--;
+   game.rivers.forEach(r => {
+      r.positionY += pixelSize;
+   })
+   game.rivers = game.rivers.filter(r => r.positionY < canvas.height);
+   if(game.countRivers <= 0 && game.spaceBetweenRivers <= 0){
+      game.countRivers = Math.floor(Math.random() * game.maxRiversRows) + 1;
+      game.spaceBetweenRivers = Math.floor(Math.random() * 4) + 1;
    }
+   
+   
+   if(game.countRivers > 0 && game.spaceBetweenRivers > 0){
+      let r = new river(pixelSize / 2);
+      game.rivers.push(r);
+      game.countRivers--;
+   }
+   else game.spaceBetweenRivers--;
+
 }
 
 function createLogs(){
@@ -167,9 +160,26 @@ function moveLogs(){
       r.logs.forEach(log => {
          if(r.direction == 'right'){
             log.positionX += r.logSpeed;
+
+            if(
+               game.player.positionY == r.positionY &&
+               log.positionX - (log.width * pixelSize / 2) <= game.player.positionX &&
+               game.player.positionX  <= log.positionX + (log.width * pixelSize / 2)
+            ){
+               game.player.positionX += r.logSpeed
+            }
          }
          else if(r.direction == 'left'){
             log.positionX -= r.logSpeed;
+
+            ///// need to fix here ///////
+            if(
+               game.player.positionY == r.positionY &&
+               log.positionX - (log.width * pixelSize / 2) < game.player.positionX &&
+               game.player.positionX > log.positionX + (log.width * pixelSize / 2)
+            ){
+               game.player.positionX -= r.logSpeed
+            }
          }
       })
 
@@ -245,6 +255,12 @@ document.addEventListener('keydown', (e) => {
 
    if(game.player.countCooldown == 0 && !game.isOver){
       if(e.key == 'ArrowUp'){
+         if(
+            game.player.positionY <= canvas.height - pixelSize * 5
+         ){
+            scrollScreen();
+         }
+         else
          game.player.directionY = -pixelSize;
       }
       else if(e.key == 'ArrowDown' && 
