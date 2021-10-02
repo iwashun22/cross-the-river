@@ -143,7 +143,6 @@ function scrollScreen(){
 function createLogs(){
    game.rivers.forEach(r => {
       if(Math.random() * 10 < 1
-      
       && r.countCooldown <= 0){
          let log = {
             width: Math.floor(Math.random() * (game.maxLogWidth - game.minLogWidth + 1)) + game.minLogWidth
