@@ -158,8 +158,8 @@ function createLogs(){
 function moveLogs(){
    game.rivers.forEach(r => {
       r.logs.forEach(log => {
-         const left = log.positionX - (log.width * pixelSize / 2);
-         const right = log.positionX + (log.width * pixelSize / 2);
+         const left = log.positionX - ((log.width / 2) * pixelSize);
+         const right = log.positionX + ((log.width / 2) * pixelSize);
          if(r.direction == 'right'){
 
             if(
@@ -167,8 +167,7 @@ function moveLogs(){
                game.player.positionX < right &&
                game.player.positionX > left
             ){
-               game.player.positionX += r.logSpeed
-               console.log(game.player.positionX, log.positionX, left, right);
+               game.player.positionX += r.logSpeed;
             }
 
             log.positionX += r.logSpeed;
@@ -180,7 +179,7 @@ function moveLogs(){
                game.player.positionX < right &&
                game.player.positionX > left
             ){
-               game.player.positionX -= r.logSpeed
+               game.player.positionX -= r.logSpeed;
             }
 
             log.positionX -= r.logSpeed;
