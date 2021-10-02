@@ -35,8 +35,8 @@ const game = {
    countRivers: 0,
    spaceBetweenRivers: 0,
 
-   maxLogWidth: 5,
-   minLogWidth: 2,
+   maxLogWidth: 6,
+   minLogWidth: 3,
    logSize: 14
 };
 
@@ -46,8 +46,8 @@ class river{
       this.positionY = y;
       this.length = pixelSize;
       this.countCooldown = 0;
-      this.cooldown = 200;
-      this.logSpeed = (Math.floor(Math.random() * 3) + 1);
+      this.logSpeed = (Math.random() * 2) + 1;
+      this.cooldown = 200 / this.logSpeed
 
       const randomDirection = Math.floor(Math.random() * 2);
       if(randomDirection == 0)
@@ -175,7 +175,7 @@ function moveLogs(){
       })
 
       r.logs = r.logs.filter(log => 
-         log.positionX + (log.width * pixelSize / 2) >= 0 &&
+         log.positionX + (log.width * pixelSize / 2) >= -log.width * pixelSize / 2&&
          log.positionX - (log.width * pixelSize / 2) <= canvas.width
       );
    })
