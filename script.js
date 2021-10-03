@@ -74,6 +74,8 @@ function init(){
    game.moving = null;
    game.rivers = [];
    game.score = 0;
+   game.spaceBetweenRivers = 0;
+   game.countRivers = 0;
    setTimeout(addKeyEvent, 1000);
 }
 init();
