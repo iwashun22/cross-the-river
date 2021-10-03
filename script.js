@@ -35,7 +35,8 @@ const game = {
    rivers: [],
    maxRiversRows: 4,
    countRivers: 0,
-   spaceBetweenRivers: 0,
+   maxRoadRows: 5,
+   countRoad: 0,
 
    maxLogWidth: 6,
    minLogWidth: 3,
@@ -74,7 +75,7 @@ function init(){
    game.moving = null;
    game.rivers = [];
    game.score = 0;
-   game.spaceBetweenRivers = 0;
+   game.countRoad = 0;
    game.countRivers = 0;
    setTimeout(addKeyEvent, 1000);
 }
@@ -128,18 +129,18 @@ function scrollScreen(){
       r.positionY += pixelSize;
    })
    game.rivers = game.rivers.filter(r => r.positionY < canvas.height);
-   if(game.countRivers <= 0 && game.spaceBetweenRivers <= 0){
-      game.countRivers = Math.floor(Math.random() * game.maxRiversRows) + 1;
-      game.spaceBetweenRivers = Math.floor(Math.random() * 4) + 1;
+   if(game.countRivers <= 0 && game.countRoad <= 0){
+      game.countRivers = Math.ceil(Math.random() * game.maxRiversRows);
+      game.countRoad = Math.ceil(Math.random() * game.maxRoadRows);
    }
    
    
-   if(game.countRivers > 0 && game.spaceBetweenRivers > 0){
+   if(game.countRivers > 0 && game.countRoad > 0){
       let r = new river(pixelSize / 2);
       game.rivers.push(r);
       game.countRivers--;
    }
-   else game.spaceBetweenRivers--;
+   else game.countRoad--;
 
    game.score++;
 }
