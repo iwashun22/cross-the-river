@@ -25,11 +25,7 @@ const game = {
       directionX: 0,
       directionY: 0,
       countCooldown: 0,
-
-      cooldown: 20,
-
       cooldown: 15
-
    },
 
    isOver: true,
@@ -69,11 +65,7 @@ function init(){
    ctx.font = "35px Arial";
    ctx.fillText(
       'Press enter to start...',
-
-      70, 
-
       75, 
-
       // @ts-ignore
       canvas.height / 2
    )
@@ -116,13 +108,8 @@ function createDefaultRivers(){
 
 
 function ticker(){
-
-   scrollScreen();
-   //createLogs();
-
    //scrollScreen();
    createLogs();
-
 
    moveLogs();
    movePlayer();
