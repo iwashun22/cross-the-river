@@ -18,7 +18,8 @@ console.log(ctx);
 
 const game = {
    player: {
-      size: 16,
+      defaultSize: 16,
+      size: 0,
       positionX: 0,
       positionY: 0,
       directionX: 0,
@@ -32,7 +33,7 @@ const game = {
    score: 0,
 
    rivers: [],
-   maxRiversRows: 5,
+   maxRiversRows: 4,
    countRivers: 0,
    spaceBetweenRivers: 0,
 
@@ -68,6 +69,7 @@ function init(){
       // @ts-ignore
       canvas.height / 2
    )
+   game.player.size = game.player.defaultSize;
    game.isOver = true;
    game.moving = null;
    game.rivers = [];
@@ -108,6 +110,8 @@ function ticker(){
 
    moveLogs();
    movePlayer();
+
+   checkGame();
 
    drawBackground();
    drawLogs();
@@ -171,9 +175,9 @@ function moveLogs(){
                game.player.positionY == r.positionY &&
                game.player.positionX < right &&
                game.player.positionX > left
-            ){
-               game.player.positionX += r.logSpeed;
-            }
+               ){
+                  game.player.positionX += r.logSpeed;
+               }
 
             log.positionX += r.logSpeed;
          }
@@ -183,12 +187,12 @@ function moveLogs(){
                game.player.positionY == r.positionY &&
                game.player.positionX < right &&
                game.player.positionX > left
-            ){
-               game.player.positionX -= r.logSpeed;
-            }
+               ){
+                  game.player.positionX -= r.logSpeed;
+               }
 
-            log.positionX -= r.logSpeed;
-         }
+            log.positionX -= r.logSpeed;  
+         } 
       })
 
       r.logs = r.logs.filter(log => 
@@ -196,6 +200,30 @@ function moveLogs(){
          log.positionX - (log.width * pixelSize / 2) <= canvas.width
       );
    })
+}
+
+function gameOver(){
+   game.isOver = true;
+   game.player.size = 0;
+   setTimeout(() => {
+      clearInterval(game.moving);
+      game.moving = null;
+   }, 200);
+
+   setTimeout(() => {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.fillRect(
+         0, 0, canvas.width, canvas.height
+      )
+
+      ctx.fillStyle = 'black';
+      ctx.font = '40px Arial';
+      ctx.fillText(
+         'Game over',
+         (canvas.width / 3) - 20,
+         canvas.height / 2
+         );
+   }, 200);
 }
 
 function movePlayer(){
@@ -210,6 +238,30 @@ function movePlayer(){
       game.player.countCooldown = 0
    :
       game.player.countCooldown--;
+}
+
+function checkGame(){
+   let isGameOver = false;
+
+   game.rivers.forEach(r => {
+      if(game.player.positionY == r.positionY){
+         isGameOver = true;
+         r.logs.forEach(log => {
+            const left = log.positionX - (log.width * pixelSize / 2);
+            const right = log.positionX + (log.width * pixelSize / 2);
+            if(
+               game.player.positionX < right &&
+               game.player.positionX > left
+            ) isGameOver = false
+         })
+      }
+   })
+
+   if(isGameOver){
+      gameOver();
+      setTimeout(init, 1000);
+   }
+   else return;
 }
 
 function drawBackground(){
