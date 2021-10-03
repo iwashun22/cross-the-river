@@ -259,6 +259,11 @@ function checkGame(){
       }
    })
 
+   if(
+      game.player.positionX < (0 - pixelSize) ||
+      game.player.positionX > (canvas.width + pixelSize)
+   ) isGameOver = true;
+
    if(isGameOver){
       gameOver();
       setTimeout(init, 1000);
