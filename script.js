@@ -74,6 +74,7 @@ function init(){
    game.moving = null;
    game.rivers = [];
    game.score = 0;
+   setTimeout(addKeyEvent, 1000);
 }
 init();
 
@@ -203,6 +204,7 @@ function moveLogs(){
 }
 
 function gameOver(){
+   document.removeEventListener('keydown', keyEvent);
    game.isOver = true;
    game.player.size = 0;
    setTimeout(() => {
@@ -308,37 +310,41 @@ function drawPlayer(){
    )
 }
 
-document.addEventListener('keydown', (e) => {
+function addKeyEvent(){
+   document.addEventListener('keydown', keyEvent);     
+}
+
+function keyEvent(e){
    if(game.isOver && e.key == 'Enter'){
       startGame();
    }
-
+   
    if(game.player.countCooldown == 0 && !game.isOver){
       if(e.key == 'ArrowUp'){
          if(
             game.player.positionY <= canvas.height - pixelSize * 5
-         ){
-            scrollScreen();
-         }
-         else
-         game.player.directionY = -pixelSize;
-      }
-      else if(e.key == 'ArrowDown' && 
-               game.player.positionY < canvas.height - pixelSize
             ){
-         game.player.directionY = pixelSize;
-      }
-      else if(e.key == 'ArrowLeft' &&
-               game.player.positionX >= (pixelSize * 3 / 2)
-      ){
-         game.player.directionX = -pixelSize;
-      }
-      else if(e.key == 'ArrowRight' &&
-               game.player.positionX <= canvas.width - (pixelSize * 3 / 2)
-      ){
-         game.player.directionX = pixelSize;;
-      }
-
-      game.player.countCooldown = game.player.cooldown;
+               scrollScreen();
+            }
+            else
+            game.player.directionY = -pixelSize;
+         }
+         else if(e.key == 'ArrowDown' && 
+         game.player.positionY < canvas.height - pixelSize
+         ){
+            game.player.directionY = pixelSize;
+         }
+         else if(e.key == 'ArrowLeft' &&
+         game.player.positionX >= (pixelSize * 3 / 2)
+         ){
+            game.player.directionX = -pixelSize;
+         }
+         else if(e.key == 'ArrowRight' &&
+         game.player.positionX <= canvas.width - (pixelSize * 3 / 2)
+         ){
+            game.player.directionX = pixelSize;;
+         }
+         
+         game.player.countCooldown = game.player.cooldown;
    }
-})
+}
