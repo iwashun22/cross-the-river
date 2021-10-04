@@ -61,7 +61,10 @@ class river{
 }
 
 function init(){
-   drawBackground();
+   ctx.fillStyle = '#FFF8C2';
+   // @ts-ignore
+   ctx.fillRect(0, 0, canvas.width, canvas.height);
+   
    ctx.fillStyle = 'black';
    ctx.font = "35px Arial";
    ctx.fillText(
@@ -207,6 +210,7 @@ function moveLogs(){
 }
 
 function gameOver(){
+   if(!game.isOver){
    return new Promise((resolve, reject) => {
       document.removeEventListener('keydown', keyEvent);
       game.isOver = true;
@@ -219,7 +223,7 @@ function gameOver(){
    })
    .then(msg => {
       setTimeout(() => {
-         ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
          ctx.fillRect(
             0, 0, canvas.width, canvas.height
             )
@@ -243,6 +247,7 @@ function gameOver(){
       },
       1000);
    });
+}
 }
 
 function movePlayer(){
@@ -283,13 +288,12 @@ function checkGame(){
 
    if(isGameOver){
       gameOver();
+      game.isOver = true;
    }
    else return;
 }
 
 function drawBackground(){
-   // @ts-ignore
-   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
    ctx.fillStyle = '#FFF8C2';
    // @ts-ignore
