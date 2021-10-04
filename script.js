@@ -93,7 +93,7 @@ function init(){
    game.countRoad = 0;
    game.countRivers = 0;
    game.countSameDirections = 0;
-   setTimeout(addKeyEvent, 1000);
+   addKeyEvent();
 }
 init();
 
