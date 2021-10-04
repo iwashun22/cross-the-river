@@ -33,6 +33,7 @@ const game = {
    score: 0,
 
    rivers: [],
+   countSameDirections: 0, // this is too prevent from having many rivers that are flowing same direction
    maxRiversRows: 4,
    countRivers: 0,
    maxRoadRows: 5,
@@ -52,11 +53,22 @@ class river{
       this.logSpeed = (Math.random() * 1.5) + 1;
       this.cooldown = 200 / this.logSpeed
 
-      const randomDirection = Math.floor(Math.random() * 1.5);
-      if(randomDirection == 0)
+      const randomDirection = Math.floor(Math.random() * 10);
+      if(game.countSameDirections < 2){
+         if(randomDirection < 5)
          this.direction = 'left';
-      else 
+         else 
          this.direction = 'right';
+      }
+      else{
+         game.countSameDirections = 0;
+         if(game.rivers.length > 0){
+            if(game.rivers[game.rivers.length - 1].direction == 'left')
+            this.direction = 'right';
+            else 
+            this.direction = 'left';
+         }
+      }
    }
 }
 
@@ -80,6 +92,7 @@ function init(){
    game.score = 0;
    game.countRoad = 0;
    game.countRivers = 0;
+   game.countSameDirections = 0;
    setTimeout(addKeyEvent, 1000);
 }
 init();
@@ -99,12 +112,20 @@ function startGame(){
 }
 
 function createDefaultRivers(){
-   for(let i = 0; i < boardHeight; i+= Math.floor(Math.random() * 4) + 1){
+   for(let i = 0; i < boardHeight; i+= Math.ceil(Math.random() * 4)){
       let randomY = canvas.height - (pixelSize / 2) - (pixelSize * i);
       
       /// we don't want to have rivers in first four lines and the top line
-      if(randomY < canvas.height - (pixelSize * 4) || randomY == pixelSize / 2){
+      if(randomY < canvas.height - (pixelSize * 4) && randomY != pixelSize / 2){
          let r = new river(randomY);
+         if(game.rivers.length > 0){
+            if(game.rivers[game.rivers.length - 1].direction == r.direction){
+               game.countSameDirections++;
+            }
+            else {
+               game.countSameDirections = 0;
+            }
+         }
          game.rivers.push(r);
       }
    }
@@ -140,6 +161,12 @@ function scrollScreen(){
    
    if(game.countRivers > 0 && game.countRoad > 0){
       let r = new river(pixelSize / 2);
+      if(game.rivers[game.rivers.length - 1].direction == r.direction){
+         game.countSameDirections++;
+      }
+      else {
+         game.countSameDirections = 0;
+      }
       game.rivers.push(r);
       game.countRivers--;
    }
