@@ -207,28 +207,42 @@ function moveLogs(){
 }
 
 function gameOver(){
-   document.removeEventListener('keydown', keyEvent);
-   game.isOver = true;
-   game.player.size = 0;
-   setTimeout(() => {
-      clearInterval(game.moving);
-      game.moving = null;
-   }, 200);
+   return new Promise((resolve, reject) => {
+      document.removeEventListener('keydown', keyEvent);
+      game.isOver = true;
+      game.player.size = 0;
+      setTimeout(() => {
+         clearInterval(game.moving);
+         game.moving = null;
+         resolve('Game over');
+      }, 300);
+   })
+   .then(msg => {
+      setTimeout(() => {
+         ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+         ctx.fillRect(
+            0, 0, canvas.width, canvas.height
+            )
+            
+         ctx.fillStyle = 'black';
+         ctx.font = '40px Arial';
+         ctx.fillText(
+            msg,
+            (canvas.width / 3) - 20,
+            canvas.height / 2
+            );
+         }, 
+      300);
 
-   setTimeout(() => {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-      ctx.fillRect(
-         0, 0, canvas.width, canvas.height
-      )
-
-      ctx.fillStyle = 'black';
-      ctx.font = '40px Arial';
-      ctx.fillText(
-         'Game over',
-         (canvas.width / 3) - 20,
-         canvas.height / 2
-         );
-   }, 200);
+      return 'refreshing';
+   })
+   .then(msg => {
+      setTimeout(() => {
+         console.log(msg);
+         init();
+      },
+      1000);
+   });
 }
 
 function movePlayer(){
@@ -269,7 +283,6 @@ function checkGame(){
 
    if(isGameOver){
       gameOver();
-      setTimeout(init, 1000);
    }
    else return;
 }
