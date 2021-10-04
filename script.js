@@ -102,8 +102,8 @@ function createDefaultRivers(){
    for(let i = 0; i < boardHeight; i+= Math.floor(Math.random() * 4) + 1){
       let randomY = canvas.height - (pixelSize / 2) - (pixelSize * i);
       
-      /// we don't want to have rivers in first four line
-      if(randomY < canvas.height - (pixelSize * 4)){
+      /// we don't want to have rivers in first four lines and the top line
+      if(randomY < canvas.height - (pixelSize * 4) || randomY == pixelSize / 2){
          let r = new river(randomY);
          game.rivers.push(r);
       }
