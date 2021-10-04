@@ -273,8 +273,9 @@ function gameOver(){
          init();
       },
       1000);
-   });
-}
+   })
+   .catch(err => console.log(err));
+   }
 }
 
 function movePlayer(){
