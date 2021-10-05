@@ -54,19 +54,22 @@ class river{
       this.cooldown = 200 / this.logSpeed
 
       const randomDirection = Math.floor(Math.random() * 10);
-      if(game.countSameDirections < 2){
          if(randomDirection < 5)
          this.direction = 'left';
          else 
          this.direction = 'right';
-      }
-      else{
+   }
+   checkDirection(){
+      const lastDirection = game.rivers.length > 0? game.rivers[game.rivers.length - 1].direction : null;
+      if(lastDirection == this.direction)
+         game.countSameDirections++;
+      else 
          game.countSameDirections = 0;
-         if(game.rivers.length > 0){
-            if(game.rivers[game.rivers.length - 1].direction == 'left')
-            this.direction = 'right';
-            else 
-            this.direction = 'left';
+
+      if(game.countSameDirections > 2){
+         if(lastDirection == this.direction){
+            this.direction = lastDirection === 'left' ? 'right' : 'left';
+            game.countSameDirections = 0;
          }
       }
    }
@@ -118,14 +121,7 @@ function createDefaultRivers(){
       /// we don't want to have rivers in first four lines and the top line
       if(randomY < canvas.height - (pixelSize * 4) && randomY != pixelSize / 2){
          let r = new river(randomY);
-         if(game.rivers.length > 0){
-            if(game.rivers[game.rivers.length - 1].direction == r.direction){
-               game.countSameDirections++;
-            }
-            else {
-               game.countSameDirections = 0;
-            }
-         }
+         r.checkDirection();
          game.rivers.push(r);
       }
    }
@@ -159,14 +155,9 @@ function scrollScreen(){
    }
    
    
-   if(game.countRivers > 0 && game.countRoad > 0){
+   if(game.countRivers > 0){
       let r = new river(pixelSize / 2);
-      if(game.rivers[game.rivers.length - 1].direction == r.direction){
-         game.countSameDirections++;
-      }
-      else {
-         game.countSameDirections = 0;
-      }
+      r.checkDirection();
       game.rivers.push(r);
       game.countRivers--;
    }
