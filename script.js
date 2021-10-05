@@ -33,7 +33,7 @@ const game = {
    score: 0,
 
    rivers: [],
-   countSameDirections: 0, // this is too prevent from having many rivers that are flowing same direction
+   countSameDirections: 0, // this is to prevent from having many rivers that are flowing same direction
    maxRiversRows: 4,
    countRivers: 0,
    maxRoadRows: 5,
@@ -89,7 +89,7 @@ function init(){
    game.isOver = true;
    game.moving = null;
    game.rivers = [];
-   game.score = 0;
+   game.score = 3; // this makes a distance display faster in first move
    game.countRoad = 0;
    game.countRivers = 0;
    game.countSameDirections = 0;
@@ -144,7 +144,7 @@ function ticker(){
    drawBackground();
    drawLogs();
    drawPlayer();
-   //displayScore();
+   displayScore();
 }
 
 function scrollScreen(){
@@ -360,6 +360,28 @@ function drawPlayer(){
       game.player.positionY - halfSize,
       game.player.size,
       game.player.size
+   )
+}
+
+function displayScore(){
+   const meters = Math.floor(game.score / 4);
+
+   const height = 35;
+
+   ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'
+   ctx.fillRect(
+      0,
+      pixelSize / 2,
+      canvas.width,
+      height
+   )
+   
+   ctx.fillStyle = 'black';
+   ctx.font = `25px Arial`;
+   ctx.fillText(
+      `${meters}m`,
+      (canvas.width / 2) - 25,
+      height + 2
    )
 }
 
