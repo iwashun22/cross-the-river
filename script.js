@@ -34,6 +34,7 @@ const game = {
 
    rivers: [],
    countSameDirections: 0, // this is to prevent from having many rivers that are flowing same direction
+   maxSameDirectionStack: 2,
    maxRiversRows: 4,
    countRivers: 0,
    maxRoadRows: 5,
@@ -59,6 +60,7 @@ class river{
          else 
          this.direction = 'right';
    }
+
    checkDirection(){
       const lastDirection = game.rivers.length > 0? game.rivers[game.rivers.length - 1].direction : null;
       if(lastDirection == this.direction)
@@ -66,7 +68,7 @@ class river{
       else 
          game.countSameDirections = 0;
 
-      if(game.countSameDirections > 2){
+      if(game.countSameDirections > (game.maxSameDirectionStack - 1)){
          if(lastDirection == this.direction){
             this.direction = lastDirection === 'left' ? 'right' : 'left';
             game.countSameDirections = 0;
