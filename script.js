@@ -68,7 +68,7 @@ class river{
       else 
          game.countSameDirections = 0;
 
-      if(game.countSameDirections > (game.maxSameDirectionStack - 1)){
+      if(game.countSameDirections == game.maxSameDirectionStack){
          if(lastDirection == this.direction){
             this.direction = lastDirection === 'left' ? 'right' : 'left';
             game.countSameDirections = 0;
