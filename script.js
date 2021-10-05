@@ -33,6 +33,8 @@ const game = {
    score: 0,
 
    rivers: [],
+   countSameDirections: 0, // this is to prevent from having many rivers that are flowing same direction
+   maxSameDirectionStack: 2,
    maxRiversRows: 4,
    countRivers: 0,
    maxRoadRows: 5,
@@ -52,16 +54,34 @@ class river{
       this.logSpeed = (Math.random() * 1.5) + 1;
       this.cooldown = 200 / this.logSpeed
 
-      const randomDirection = Math.floor(Math.random() * 1.5);
-      if(randomDirection == 0)
+      const randomDirection = Math.floor(Math.random() * 10);
+         if(randomDirection < 5)
          this.direction = 'left';
-      else 
+         else 
          this.direction = 'right';
+   }
+
+   checkDirection(){
+      const lastDirection = game.rivers.length > 0? game.rivers[game.rivers.length - 1].direction : null;
+      if(lastDirection == this.direction)
+         game.countSameDirections++;
+      else 
+         game.countSameDirections = 0;
+
+      if(game.countSameDirections == game.maxSameDirectionStack){
+         if(lastDirection == this.direction){
+            this.direction = lastDirection === 'left' ? 'right' : 'left';
+            game.countSameDirections = 0;
+         }
+      }
    }
 }
 
 function init(){
-   drawBackground();
+   ctx.fillStyle = '#FFF8C2';
+   // @ts-ignore
+   ctx.fillRect(0, 0, canvas.width, canvas.height);
+   
    ctx.fillStyle = 'black';
    ctx.font = "35px Arial";
    ctx.fillText(
@@ -74,10 +94,11 @@ function init(){
    game.isOver = true;
    game.moving = null;
    game.rivers = [];
-   game.score = 0;
+   game.score = 3; // this makes a distance display faster in first move
    game.countRoad = 0;
    game.countRivers = 0;
-   setTimeout(addKeyEvent, 1000);
+   game.countSameDirections = 0;
+   addKeyEvent();
 }
 init();
 
@@ -96,12 +117,13 @@ function startGame(){
 }
 
 function createDefaultRivers(){
-   for(let i = 0; i < boardHeight; i+= Math.floor(Math.random() * 4) + 1){
+   for(let i = 0; i < boardHeight; i+= Math.ceil(Math.random() * 4)){
       let randomY = canvas.height - (pixelSize / 2) - (pixelSize * i);
       
-      /// we don't want to have rivers in first four line
-      if(randomY < canvas.height - (pixelSize * 4)){
+      /// we don't want to have rivers in first four lines and the top line
+      if(randomY < canvas.height - (pixelSize * 4) && randomY != pixelSize / 2){
          let r = new river(randomY);
+         r.checkDirection();
          game.rivers.push(r);
       }
    }
@@ -120,7 +142,7 @@ function ticker(){
    drawBackground();
    drawLogs();
    drawPlayer();
-   //displayScore();
+   displayScore();
 }
 
 function scrollScreen(){
@@ -135,8 +157,9 @@ function scrollScreen(){
    }
    
    
-   if(game.countRivers > 0 && game.countRoad > 0){
+   if(game.countRivers > 0){
       let r = new river(pixelSize / 2);
+      r.checkDirection();
       game.rivers.push(r);
       game.countRivers--;
    }
@@ -207,28 +230,45 @@ function moveLogs(){
 }
 
 function gameOver(){
-   document.removeEventListener('keydown', keyEvent);
-   game.isOver = true;
-   game.player.size = 0;
-   setTimeout(() => {
-      clearInterval(game.moving);
-      game.moving = null;
-   }, 200);
+   if(!game.isOver){
+   return new Promise((resolve, reject) => {
+      document.removeEventListener('keydown', keyEvent);
+      game.isOver = true;
+      game.player.size = 0;
+      setTimeout(() => {
+         clearInterval(game.moving);
+         game.moving = null;
+         resolve('Game over');
+      }, 300);
+   })
+   .then(msg => {
+      setTimeout(() => {
+         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+         ctx.fillRect(
+            0, 0, canvas.width, canvas.height
+            )
+            
+         ctx.fillStyle = 'black';
+         ctx.font = '40px Arial';
+         ctx.fillText(
+            msg,
+            (canvas.width / 3) - 20,
+            canvas.height / 2
+            );
+         }, 
+      300);
 
-   setTimeout(() => {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-      ctx.fillRect(
-         0, 0, canvas.width, canvas.height
-      )
-
-      ctx.fillStyle = 'black';
-      ctx.font = '40px Arial';
-      ctx.fillText(
-         'Game over',
-         (canvas.width / 3) - 20,
-         canvas.height / 2
-         );
-   }, 200);
+      return 'refreshing';
+   })
+   .then(msg => {
+      setTimeout(() => {
+         console.log(msg);
+         init();
+      },
+      1000);
+   })
+   .catch(err => console.log(err));
+   }
 }
 
 function movePlayer(){
@@ -269,14 +309,12 @@ function checkGame(){
 
    if(isGameOver){
       gameOver();
-      setTimeout(init, 1000);
+      game.isOver = true;
    }
    else return;
 }
 
 function drawBackground(){
-   // @ts-ignore
-   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
    ctx.fillStyle = '#FFF8C2';
    // @ts-ignore
@@ -315,6 +353,28 @@ function drawPlayer(){
       game.player.positionY - halfSize,
       game.player.size,
       game.player.size
+   )
+}
+
+function displayScore(){
+   const meters = Math.floor(game.score / 4);
+
+   const height = 35;
+
+   ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'
+   ctx.fillRect(
+      0,
+      pixelSize / 2,
+      canvas.width,
+      height
+   )
+   
+   ctx.fillStyle = 'black';
+   ctx.font = `25px Arial`;
+   ctx.fillText(
+      `${meters}m`,
+      (canvas.width / 2) - 25,
+      height + 2
    )
 }
 
